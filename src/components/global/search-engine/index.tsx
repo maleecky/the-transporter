@@ -65,10 +65,10 @@ const searchTags: tags[] = [
     label: "Date",
     dropdown: [
       { id: 0, label: "This month", value: "recently" },
-      { id: 0, label: "Last 3 months", value: "threeMonths" },
-      { id: 0, label: "Last 6 months", value: "sixMonths" },
-      { id: 0, label: "Last year", value: "lastYear" },
-      { id: 0, label: "Custom", value: "custom" },
+      { id: 1, label: "Last 3 months", value: "threeMonths" },
+      { id: 2, label: "Last 6 months", value: "sixMonths" },
+      { id: 3, label: "Last year", value: "lastYear" },
+      { id: 4, label: "Custom", value: "custom" },
     ],
   },
   {
@@ -76,9 +76,9 @@ const searchTags: tags[] = [
     label: "Status",
     dropdown: [
       { id: 0, label: "Pending", value: "pending" },
-      { id: 0, label: "Loading", value: "loading" },
-      { id: 0, label: "Transit", value: "transit" },
-      { id: 0, label: "Delivered", value: "delivered" },
+      { id: 1, label: "Loading", value: "loading" },
+      { id: 2, label: "Transit", value: "transit" },
+      { id: 3, label: "Delivered", value: "delivered" },
     ],
   },
   {
