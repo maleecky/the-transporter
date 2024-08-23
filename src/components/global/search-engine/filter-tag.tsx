@@ -1,4 +1,6 @@
-import { Props } from "@/lib/types";
+"use client";
+
+import { Button } from "@/components/ui/button";
 import clsx from "clsx";
 import { ChevronDown } from "lucide-react";
 import React from "react";
