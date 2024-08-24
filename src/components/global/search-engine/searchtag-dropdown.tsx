@@ -16,7 +16,6 @@ import { Input } from "@/components/ui/input";
 
 type optionType = {
   id: number;
-  value: string;
   label: string;
 };
 
@@ -25,6 +24,9 @@ interface DropdownProps {
   active?: boolean;
   plain?: boolean;
   options?: optionType[] | boolean;
+  position: string;
+  tagId: number;
+  setPosition: (id: number, selectedLabel: string) => void;
 }
 
 export default function FilterButtonDropdown({
@@ -32,9 +34,10 @@ export default function FilterButtonDropdown({
   active,
   plain,
   options,
+  position,
+  tagId,
+  setPosition,
 }: Readonly<DropdownProps>) {
-  const [position, setPosition] = React.useState("lightAmount");
-
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -56,10 +59,13 @@ export default function FilterButtonDropdown({
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent className="w-50 text-xs  ">
-        <DropdownMenuRadioGroup value={position} onValueChange={setPosition}>
+        <DropdownMenuRadioGroup
+          value={position}
+          onValueChange={(value) => setPosition(tagId, value)}
+        >
           {Array.isArray(options) ? (
             options.map((option) => (
-              <DropdownMenuRadioItem key={option.id} value={option.value}>
+              <DropdownMenuRadioItem key={option.id} value={option.label}>
                 {option.label}
               </DropdownMenuRadioItem>
             ))

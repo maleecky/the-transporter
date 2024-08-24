@@ -3,16 +3,20 @@
 import clsx from "clsx";
 import { ChevronDown } from "lucide-react";
 import React from "react";
+import { tags } from ".";
 
 interface FilterProps {
   children: React.ReactNode;
   active?: boolean;
   plain?: boolean;
+  handleclick: (tags: tags) => void;
 }
 
-const FilterTag = ({ children, active, plain }: FilterProps) => {
+const FilterTag = ({ children, handleclick, active, plain }: FilterProps) => {
   return (
     <div
+      role="button"
+      onClick={handleclick}
       className={clsx(
         "flex relative items-center   text-[13px] py-1 rounded-lg",
         {

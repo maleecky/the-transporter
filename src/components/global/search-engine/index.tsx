@@ -3,10 +3,10 @@
 import { Button } from "@/components/ui/button";
 import clsx from "clsx";
 
-import { X } from "lucide-react";
+import { ChevronDown, X } from "lucide-react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useDebouncedCallback } from "use-debounce";
-import React, { useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import FilterTag from "./filter-tag";
 import FilterButtonDropdown from "./searchtag-dropdown";
 
@@ -33,9 +33,9 @@ const dateOptions = [
   { id: 0, label: "Custom", value: "custom" },
 ];
 
-type options = { id: number; label: string; value: string };
+type options = { id: number; label: string };
 
-type tags = {
+export type tags = {
   id: number;
   label: string;
   dropdown: options[] | boolean;
@@ -53,32 +53,32 @@ const searchTags: tags[] = [
     id: 1,
     label: "Amount",
     dropdown: [
-      { id: 0, label: "Less than 50k", value: "lightAmount" },
-      { id: 1, label: "50k upto 410k", value: "regularAmount" },
-      { id: 2, label: "410k upto 610k", value: "mediumAmount" },
-      { id: 3, label: "610k upto 1000k", value: "largeAmount" },
-      { id: 4, label: "Above 1000k", value: "extraLargeAmount" },
+      { id: 0, label: "Less than 50k" },
+      { id: 1, label: "50k upto 410k" },
+      { id: 2, label: "410k upto 610k" },
+      { id: 3, label: "610k upto 1000k" },
+      { id: 4, label: "Above 1000k" },
     ],
   },
   {
     id: 2,
     label: "Date",
     dropdown: [
-      { id: 0, label: "This month", value: "recently" },
-      { id: 1, label: "Last 3 months", value: "threeMonths" },
-      { id: 2, label: "Last 6 months", value: "sixMonths" },
-      { id: 3, label: "Last year", value: "lastYear" },
-      { id: 4, label: "Custom", value: "custom" },
+      { id: 0, label: "This month" },
+      { id: 1, label: "Last 3 months" },
+      { id: 2, label: "Last 6 months" },
+      { id: 3, label: "Last year" },
+      { id: 4, label: "Custom" },
     ],
   },
   {
     id: 3,
     label: "Status",
     dropdown: [
-      { id: 0, label: "Pending", value: "pending" },
-      { id: 1, label: "Loading", value: "loading" },
-      { id: 2, label: "Transit", value: "transit" },
-      { id: 3, label: "Delivered", value: "delivered" },
+      { id: 0, label: "Pending" },
+      { id: 1, label: "Loading" },
+      { id: 2, label: "Transit" },
+      { id: 3, label: "Delivered" },
     ],
   },
   {
@@ -108,6 +108,8 @@ const SearchEngine = () => {
   const pathname = usePathname();
   const { replace } = useRouter();
   const inputEl = useRef<HTMLInputElement | null>(null);
+  const [tags, setTags] = useState<tags[]>(searchTags);
+  const [position, setPosition] = React.useState("");
 
   const handleSearch = useDebouncedCallback((term: string) => {
     const params = new URLSearchParams(searchParams);
@@ -127,6 +129,38 @@ const SearchEngine = () => {
       replace(pathname);
     }
   }
+
+  const handleClick = (tag: tags) => {
+    if (tag.label === "All") {
+      setTags((prev) =>
+        prev.map((obj) =>
+          obj.id === tag.id
+            ? { ...obj, active: true }
+            : { ...obj, active: false }
+        )
+      );
+    } else {
+      setTags((prev) =>
+        prev.map((obj) =>
+          obj.id === tag.id ? { ...obj, active: !obj.active } : obj
+        )
+      );
+    }
+
+    setTags((prev) =>
+      prev.map((obj) => (obj.label === "All" ? { ...obj, active: false } : obj))
+    );
+  };
+
+  const ondropdownClick = (id: number, selectedLabel: string) => {
+    setTags((prev) =>
+      prev.map((item) =>
+        item.id === id ? { ...item, label: selectedLabel, active: true } : item
+      )
+    );
+
+    setPosition(selectedLabel);
+  };
 
   const emptyInput =
     inputEl.current?.value === "" || inputEl.current?.value === undefined;
@@ -158,20 +192,34 @@ const SearchEngine = () => {
       </div>
 
       <div className="flex gap-3 overflow-x-auto disable-scroll items-center">
-        {searchTags.map((tag) => {
+        {tags.map((tag) => {
           if (tag.dropdown) {
             return (
               <FilterButtonDropdown
                 key={tag.id}
                 label={tag.label}
                 options={tag.dropdown}
+                position={position}
+                tagId={tag.id}
+                setPosition={ondropdownClick}
+                active={tag.active}
               />
             );
           }
           return (
-            <FilterTag key={tag.id} plain active={tag.active}>
+            <Button
+              key={tag.id}
+              onClick={() => handleClick(tag)}
+              className={clsx(
+                "flex relative items-center  px-3 h-max  text-[13px] py-1 rounded-lg",
+                {
+                  "bg-blue-400 hover:bg-blue-400 text-white": tag.active,
+                  "bg-[#f1f1f1] hover:bg-[#f5f5f5] text-black": !tag.active,
+                }
+              )}
+            >
               {tag.label}
-            </FilterTag>
+            </Button>
           );
         })}
       </div>

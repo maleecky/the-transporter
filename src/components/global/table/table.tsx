@@ -94,9 +94,6 @@ const TableUi = ({
 
   const emptyRows =
     page > 0 ? Math.max(0, (1 + page) * rowsPerPage - rows.length) : 0;
-  React.useEffect(() => {
-    console.log(page, selected, order);
-  }, [page, selected, order]);
 
   return (
     <ThemeProvider theme={theme}>
