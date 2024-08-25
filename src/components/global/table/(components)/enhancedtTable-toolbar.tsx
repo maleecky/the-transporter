@@ -84,7 +84,7 @@ export default function EnhancedTableToolbar(
               )}
             </div>
           </div>
-          <div className="flex-1">
+          <div className="flex-1 overflow-hidden">
             <SearchEngine />
           </div>
         </div>

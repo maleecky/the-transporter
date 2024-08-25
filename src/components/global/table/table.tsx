@@ -110,7 +110,7 @@ const TableUi = ({
           }}
         >
           <TableContainer sx={{ overflowY: "hidden" }}>
-            <div className="absolute left-0 mx-4  right-0">
+            <div className="absolute left-0 mx-4 overflow-hidden  right-0">
               <EnhancedTableToolbar
                 numSelected={selected.length}
                 count={rows.length}
