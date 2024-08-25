@@ -54,6 +54,12 @@ const SearchEngine = () => {
           obj.id === tag.id ? { ...obj, active: !obj.active } : obj
         )
       );
+
+      setTags((prev) =>
+        prev.map((obj) =>
+          obj.label === "All" ? { ...obj, active: false } : obj
+        )
+      );
     }
   };
 
