@@ -42,68 +42,86 @@ export default function FilterButtonDropdown({
   value,
   onSelectHandler,
 }: Readonly<DropdownProps>) {
-  const touchStartY = React.useRef<number | null>(null);
+  const [isOpen, setIsOpen] = React.useState(false);
 
-  const handleTouchStart = (e: React.TouchEvent) => {
-    touchStartY.current = e.touches[0].clientY;
-  };
+  const elRef = React.useRef<HTMLDivElement | null>(null);
 
-  const handleTouchEnd = (e: React.TouchEvent) => {
-    const touchEndY = e.changedTouches[0].clientY;
-    const touchDelta = Math.abs(touchEndY - (touchStartY.current || 0));
+  function handleclick() {
+    setIsOpen((prevState) => !prevState);
+  }
 
-    // Threshold for detecting a tap
-    if (touchDelta < 10) {
-      triggerDropdown();
+  function handleOutsideClick(e: MouseEvent) {
+    if (elRef.current && !elRef.current.contains(e.target as Node)) {
+      setIsOpen(false);
     }
-  };
+  }
 
-  const triggerDropdown = () => {
-    const button = document.getElementById(`dropdown-${tagId}`);
-    if (button) {
-      button.click();
-    }
-  };
+  React.useEffect(() => {
+    document.addEventListener("click", handleOutsideClick);
+
+    return () => {
+      document.removeEventListener("click", handleOutsideClick);
+    };
+  });
 
   return Array.isArray(options) ? (
-    <DropdownMenu>
-      <DropdownMenuTrigger asChild>
-        <Button
-          id={`dropdown-${tagId}`}
-          onTouchStart={handleTouchStart}
-          onTouchEnd={handleTouchEnd}
-          onClick={(e) => e.stopPropagation()}
-          variant="ghost"
-          className={clsx(
-            "flex relative items-center   text-[13px] py-1 h-max rounded-lg  pr-5 pl-2 !outline-none !border-none focus-visible:ring-transparent",
-            {
-              "bg-blue-400 hover:bg-blue-400 hover:text-white text-white":
-                active,
-              "bg-[#f1f1f1]": !active,
-              "": plain,
-            }
-          )}
-        >
-          {label}
-          <div className="absolute right-0 pr-1">
-            <ChevronDown width={12} className="" />
-          </div>
-        </Button>
-      </DropdownMenuTrigger>
-      <DropdownMenuContent className="w-50 text-xs  ">
-        <DropdownMenuRadioGroup
-          value={position}
-          onValueChange={(value) => setPosition(tagId, value)}
-        >
-          {options.map((option) => (
-            <DropdownMenuRadioItem key={option.id} value={option.label}>
-              {option.label}
-            </DropdownMenuRadioItem>
-          ))}
-        </DropdownMenuRadioGroup>
-      </DropdownMenuContent>
-    </DropdownMenu>
+    <div>
+      <button
+        className="bg-[#f1f1f1] relative flex items-center text-[13px] py-1 pr-5 pl-3 rounded-lg"
+        onClick={handleclick}
+      >
+        <div>{label}</div>
+        <div className="absolute right-0 pr-1">
+          <ChevronDown width={12} className="" />
+        </div>
+      </button>
+      <div
+        ref={elRef}
+        className={clsx("absolute z-30 bg-white ", {
+          "p-4 shadow-lg": isOpen,
+        })}
+      >
+        {isOpen && options.map((item) => <div key={item.id}>{item.label}</div>)}
+      </div>
+    </div>
   ) : (
+    // <DropdownMenu>
+    //   <DropdownMenuTrigger asChild>
+    //     <Button
+    //       id={`dropdown-${tagId}`}
+    //       onTouchStart={handleTouchStart}
+    //       onTouchEnd={handleTouchEnd}
+    //       onClick={(e) => e.stopPropagation()}
+    //       variant="ghost"
+    //       className={clsx(
+    //         "flex relative items-center   text-[13px] py-1 h-max rounded-lg  pr-5 pl-2 !outline-none !border-none focus-visible:ring-transparent",
+    //         {
+    //           "bg-blue-400 hover:bg-blue-400 hover:text-white text-white":
+    //             active,
+    //           "bg-[#f1f1f1]": !active,
+    //           "": plain,
+    //         }
+    //       )}
+    //     >
+    //       {label}
+    //       <div className="absolute right-0 pr-1">
+    //         <ChevronDown width={12} className="" />
+    //       </div>
+    //     </Button>
+    //   </DropdownMenuTrigger>
+    //   <DropdownMenuContent className="w-50 text-xs  ">
+    //     <DropdownMenuRadioGroup
+    //       value={position}
+    //       onValueChange={(value) => setPosition(tagId, value)}
+    //     >
+    //       {options.map((option) => (
+    //         <DropdownMenuRadioItem key={option.id} value={option.label}>
+    //           {option.label}
+    //         </DropdownMenuRadioItem>
+    //       ))}
+    //     </DropdownMenuRadioGroup>
+    //   </DropdownMenuContent>
+    // </DropdownMenu>
     <SearchDropdown
       active={active}
       value={value}
