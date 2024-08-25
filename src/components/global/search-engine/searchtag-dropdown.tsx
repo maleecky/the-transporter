@@ -42,10 +42,37 @@ export default function FilterButtonDropdown({
   value,
   onSelectHandler,
 }: Readonly<DropdownProps>) {
+  const touchStartY = React.useRef<number | null>(null);
+
+  const handleTouchStart = (e: React.TouchEvent) => {
+    touchStartY.current = e.touches[0].clientY;
+  };
+
+  const handleTouchEnd = (e: React.TouchEvent) => {
+    const touchEndY = e.changedTouches[0].clientY;
+    const touchDelta = Math.abs(touchEndY - (touchStartY.current || 0));
+
+    // Threshold for detecting a tap
+    if (touchDelta < 10) {
+      triggerDropdown();
+    }
+  };
+
+  const triggerDropdown = () => {
+    const button = document.getElementById(`dropdown-${tagId}`);
+    if (button) {
+      button.click();
+    }
+  };
+
   return Array.isArray(options) ? (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <Button
+          id={`dropdown-${tagId}`}
+          onTouchStart={handleTouchStart}
+          onTouchEnd={handleTouchEnd}
+          onClick={(e) => e.stopPropagation()}
           variant="ghost"
           className={clsx(
             "flex relative items-center   text-[13px] py-1 h-max rounded-lg  pr-5 pl-2 !outline-none !border-none focus-visible:ring-transparent",

@@ -40,7 +40,7 @@ const SearchEngine = () => {
   }
 
   const handleClick = (tag: tags) => {
-    if (tag.label === "All") {
+    if (tag.label.toLowerCase() === "all") {
       setTags((prev) =>
         prev.map((obj) =>
           obj.id === tag.id
@@ -54,11 +54,12 @@ const SearchEngine = () => {
           obj.id === tag.id ? { ...obj, active: !obj.active } : obj
         )
       );
+      setTags((prev) =>
+        prev.map((obj) =>
+          obj.label === "All" ? { ...obj, active: false } : obj
+        )
+      );
     }
-
-    setTags((prev) =>
-      prev.map((obj) => (obj.label === "All" ? { ...obj, active: false } : obj))
-    );
   };
 
   const ondropdownClick = (id: number, selectedLabel: string) => {
