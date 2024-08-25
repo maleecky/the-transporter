@@ -12,7 +12,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { ChevronDown } from "lucide-react";
 import clsx from "clsx";
-import { Input } from "@/components/ui/input";
+import { SearchDropdown } from "./search-dropdown";
 
 type optionType = {
   id: number;
@@ -24,9 +24,11 @@ interface DropdownProps {
   active?: boolean;
   plain?: boolean;
   options?: optionType[] | boolean;
+  value?: string;
   position: string;
   tagId: number;
   setPosition: (id: number, selectedLabel: string) => void;
+  onSelectHandler: (id: number, value: string) => void;
 }
 
 export default function FilterButtonDropdown({
@@ -37,8 +39,10 @@ export default function FilterButtonDropdown({
   position,
   tagId,
   setPosition,
+  value,
+  onSelectHandler,
 }: Readonly<DropdownProps>) {
-  return (
+  return Array.isArray(options) ? (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <Button
@@ -46,7 +50,8 @@ export default function FilterButtonDropdown({
           className={clsx(
             "flex relative items-center   text-[13px] py-1 h-max rounded-lg  pr-5 pl-2 !outline-none !border-none focus-visible:ring-transparent",
             {
-              "bg-blue-400 text-white": active,
+              "bg-blue-400 hover:bg-blue-400 hover:text-white text-white":
+                active,
               "bg-[#f1f1f1]": !active,
               "": plain,
             }
@@ -63,23 +68,20 @@ export default function FilterButtonDropdown({
           value={position}
           onValueChange={(value) => setPosition(tagId, value)}
         >
-          {Array.isArray(options) ? (
-            options.map((option) => (
-              <DropdownMenuRadioItem key={option.id} value={option.label}>
-                {option.label}
-              </DropdownMenuRadioItem>
-            ))
-          ) : (
-            <div className="p-[2px]">
-              <Input
-                type="text"
-                placeholder={`Search ${label}`}
-                className="text-xs placeholder:text-slate-400 bg-slate-50"
-              />
-            </div>
-          )}
+          {options.map((option) => (
+            <DropdownMenuRadioItem key={option.id} value={option.label}>
+              {option.label}
+            </DropdownMenuRadioItem>
+          ))}
         </DropdownMenuRadioGroup>
       </DropdownMenuContent>
     </DropdownMenu>
+  ) : (
+    <SearchDropdown
+      active={active}
+      value={value}
+      tagId={tagId}
+      onSelectHandler={onSelectHandler}
+    />
   );
 }

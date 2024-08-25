@@ -48,3 +48,12 @@ export interface EnhancedTableToolbarProps {
   rowsPerPage: number;
   onPageChange: (event: unknown, newPage: number) => void;
 }
+
+type options = { id: number; label: string };
+
+export type tags = {
+  id: number;
+  label: string;
+  dropdown: options[] | boolean;
+  active?: boolean;
+};

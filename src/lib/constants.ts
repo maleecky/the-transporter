@@ -1,4 +1,4 @@
-import { Data, HeadCell } from "./types";
+import { Data, HeadCell, tags } from "./types";
 import { createData } from "./utils";
 
 export const headCells: readonly HeadCell[] = [
@@ -197,4 +197,65 @@ export const rows: Data[] = [
     "Delivered",
     "view"
   ),
+];
+
+export const searchTags: tags[] = [
+  {
+    id: 0,
+    label: "All",
+    dropdown: false,
+    active: true,
+  },
+  {
+    id: 1,
+    label: "Amount",
+    dropdown: [
+      { id: 0, label: "Less than 50k" },
+      { id: 1, label: "50k upto 410k" },
+      { id: 2, label: "410k upto 610k" },
+      { id: 3, label: "610k upto 1000k" },
+      { id: 4, label: "Above 1000k" },
+    ],
+  },
+  {
+    id: 2,
+    label: "Date",
+    dropdown: [
+      { id: 0, label: "This month" },
+      { id: 1, label: "Last 3 months" },
+      { id: 2, label: "Last 6 months" },
+      { id: 3, label: "Last year" },
+      { id: 4, label: "Custom" },
+    ],
+  },
+  {
+    id: 3,
+    label: "Status",
+    dropdown: [
+      { id: 0, label: "Pending" },
+      { id: 1, label: "Loading" },
+      { id: 2, label: "Transit" },
+      { id: 3, label: "Delivered" },
+    ],
+  },
+  {
+    id: 4,
+    label: "Ago",
+    dropdown: false,
+  },
+  {
+    id: 5,
+    label: "Pms",
+    dropdown: false,
+  },
+  {
+    id: 6,
+    label: "Both",
+    dropdown: false,
+  },
+  {
+    id: 7,
+    label: "Destination",
+    dropdown: true,
+  },
 ];

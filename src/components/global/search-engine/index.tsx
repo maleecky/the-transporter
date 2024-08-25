@@ -3,105 +3,13 @@
 import { Button } from "@/components/ui/button";
 import clsx from "clsx";
 
-import { ChevronDown, X } from "lucide-react";
+import { X } from "lucide-react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useDebouncedCallback } from "use-debounce";
-import React, { useEffect, useRef, useState } from "react";
-import FilterTag from "./filter-tag";
+import React, { useRef, useState } from "react";
 import FilterButtonDropdown from "./searchtag-dropdown";
-
-const AmountOptions = [
-  { id: 0, label: "Less than 50k", value: "lightAmount" },
-  { id: 1, label: "50k upto 410k", value: "regularAmount" },
-  { id: 2, label: "410k upto 610k", value: "mediumAmount" },
-  { id: 3, label: "610k upto 1000k", value: "largeAmount" },
-  { id: 4, label: "Above 1000k", value: "extraLargeAmount" },
-];
-
-const statusOptions = [
-  { id: 0, label: "Pending", value: "pending" },
-  { id: 0, label: "Loading", value: "loading" },
-  { id: 0, label: "Transit", value: "transit" },
-  { id: 0, label: "Delivered", value: "delivered" },
-];
-
-const dateOptions = [
-  { id: 0, label: "This month", value: "recently" },
-  { id: 0, label: "Last 3 months", value: "threeMonths" },
-  { id: 0, label: "Last 6 months", value: "sixMonths" },
-  { id: 0, label: "Last year", value: "lastYear" },
-  { id: 0, label: "Custom", value: "custom" },
-];
-
-type options = { id: number; label: string };
-
-export type tags = {
-  id: number;
-  label: string;
-  dropdown: options[] | boolean;
-  active?: boolean;
-};
-
-const searchTags: tags[] = [
-  {
-    id: 0,
-    label: "All",
-    dropdown: false,
-    active: true,
-  },
-  {
-    id: 1,
-    label: "Amount",
-    dropdown: [
-      { id: 0, label: "Less than 50k" },
-      { id: 1, label: "50k upto 410k" },
-      { id: 2, label: "410k upto 610k" },
-      { id: 3, label: "610k upto 1000k" },
-      { id: 4, label: "Above 1000k" },
-    ],
-  },
-  {
-    id: 2,
-    label: "Date",
-    dropdown: [
-      { id: 0, label: "This month" },
-      { id: 1, label: "Last 3 months" },
-      { id: 2, label: "Last 6 months" },
-      { id: 3, label: "Last year" },
-      { id: 4, label: "Custom" },
-    ],
-  },
-  {
-    id: 3,
-    label: "Status",
-    dropdown: [
-      { id: 0, label: "Pending" },
-      { id: 1, label: "Loading" },
-      { id: 2, label: "Transit" },
-      { id: 3, label: "Delivered" },
-    ],
-  },
-  {
-    id: 4,
-    label: "Ago",
-    dropdown: false,
-  },
-  {
-    id: 5,
-    label: "Pms",
-    dropdown: false,
-  },
-  {
-    id: 6,
-    label: "Both",
-    dropdown: false,
-  },
-  {
-    id: 7,
-    label: "Destination",
-    dropdown: true,
-  },
-];
+import { tags } from "@/lib/types";
+import { searchTags } from "@/lib/constants";
 
 const SearchEngine = () => {
   const searchParams = useSearchParams();
@@ -110,6 +18,7 @@ const SearchEngine = () => {
   const inputEl = useRef<HTMLInputElement | null>(null);
   const [tags, setTags] = useState<tags[]>(searchTags);
   const [position, setPosition] = React.useState("");
+  const [value, setValue] = React.useState("");
 
   const handleSearch = useDebouncedCallback((term: string) => {
     const params = new URLSearchParams(searchParams);
@@ -159,7 +68,22 @@ const SearchEngine = () => {
       )
     );
 
+    setTags((prev) =>
+      prev.map((obj) => (obj.label === "All" ? { ...obj, active: false } : obj))
+    );
+
     setPosition(selectedLabel);
+  };
+
+  const onSelectionChange = (id: number, currentValue: string) => {
+    setTags((prev) =>
+      prev.map((item) => (item.id === id ? { ...item, active: true } : item))
+    );
+
+    setTags((prev) =>
+      prev.map((obj) => (obj.label === "All" ? { ...obj, active: false } : obj))
+    );
+    setValue(currentValue === value ? "" : currentValue);
   };
 
   const emptyInput =
@@ -203,6 +127,8 @@ const SearchEngine = () => {
                 tagId={tag.id}
                 setPosition={ondropdownClick}
                 active={tag.active}
+                value={value}
+                onSelectHandler={onSelectionChange}
               />
             );
           }
