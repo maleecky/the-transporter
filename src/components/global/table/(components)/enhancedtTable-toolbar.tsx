@@ -46,12 +46,9 @@ export default function EnhancedTableToolbar(
           <div className="flex items-center justify-between">
             <h2 className="text-lg font-semibold">Orders</h2>
             <div className="flex items-center gap-6 ">
-              <Button
-                variant="ghost"
-                className="p-1 bg-blue-400 font-normal h-max text-white !px-3"
-              >
+              <Button variant="ghost" className="!p-0 font-normal h-0">
                 <PlusCircle width={15} />
-                <span className="ml-2">New</span>
+                <span className="ml-1">New</span>
               </Button>
 
               {count > 0 && (

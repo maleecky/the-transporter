@@ -100,7 +100,10 @@
 }
 
 .disable-scroll {
-  -webkit-overflow-scrolling: auto;
+  overflow-x: scroll;
+  -ms-overflow-style: none;
+  overflow: -moz-scrollbars-none;
+  scrollbar-width: none;
 }
 
 ::-webkit-scrollbar {
@@ -112,7 +115,7 @@
 }
 
 .disable-scroll::-webkit-scrollbar {
-  @apply h-0 w-0;
+  @apply !hidden w-0 h-0;
 }
 
 /**
