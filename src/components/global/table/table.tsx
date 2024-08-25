@@ -157,6 +157,10 @@ const TableUi = ({
                             onClick={(event) => handleClick(event, row.id)}
                             checked={isItemSelected}
                             size="small"
+                            className="p-0"
+                            sx={{
+                              padding: 0,
+                            }}
                             inputProps={{
                               "aria-labelledby": labelId,
                             }}

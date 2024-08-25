@@ -99,6 +99,10 @@
   overflow: auto !important;
 }
 
+.disable-scroll {
+  -webkit-overflow-scrolling: auto;
+}
+
 ::-webkit-scrollbar {
   @apply bg-white h-[6px] w-[6px];
 }
