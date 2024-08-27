@@ -48,7 +48,7 @@ export function SearchDropdown({
           role="combobox"
           aria-expanded={open}
           className={clsx(
-            "w-[140px] justify-between items-center   text-[13px] py-1 h-max rounded-lg  pr-5 pl-2 !outline-none !border-none focus-visible:ring-transparent",
+            "w-[140px] justify-between items-center font-[400] text-black   text-[13px] py-1 h-max rounded-lg  pr-5 pl-2 !outline-none !border-none focus-visible:ring-transparent",
             {
               "bg-blue-400 !text-white hover:bg-blue-400": active,
               "bg-[#f1f1f1]": !active,

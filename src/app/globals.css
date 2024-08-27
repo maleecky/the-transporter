@@ -137,3 +137,12 @@
 .MuiTablePagination-actions {
   margin-left: 0 !important;
 } */
+.custom-radio {
+  border-radius: 50px;
+  padding: 3px;
+  transition: background 0.2s ease-in;
+}
+
+.radio:checked + .custom-radio {
+  background-color: #b6b6b6;
+}

@@ -6,19 +6,36 @@ import clsx from "clsx";
 import { X } from "lucide-react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useDebouncedCallback } from "use-debounce";
-import React, { useRef, useState } from "react";
-import FilterButtonDropdown from "./searchtag-dropdown";
+import React, { createRef, useRef } from "react";
+import FilterButtonDropdown from "./filterButton-dropdown";
 import { tags } from "@/lib/types";
-import { searchTags } from "@/lib/constants";
+import SearchProvider, { useSearch } from "./search-context";
 
-const SearchEngine = () => {
+const SearchEngineWrapper = () => {
   const searchParams = useSearchParams();
   const pathname = usePathname();
   const { replace } = useRouter();
   const inputEl = useRef<HTMLInputElement | null>(null);
-  const [tags, setTags] = useState<tags[]>(searchTags);
-  const [position, setPosition] = React.useState("");
-  const [value, setValue] = React.useState("");
+  const elRef = createRef<HTMLButtonElement>();
+
+  const { tags, toggleTag, updateTag } = useSearch();
+
+  // const handleOutsideClick = useCallback(
+  //   (e: MouseEvent) => {
+  //     if (elRef.current && !elRef.current.contains(e.target as Node)) {
+  //       setIsOpen(false);
+  //     }
+  //   },
+  //   [elRef]
+  // );
+
+  // React.useEffect(() => {
+  //   if (isOpen) document.addEventListener("click", handleOutsideClick);
+
+  //   return () => {
+  //     document.removeEventListener("click", handleOutsideClick);
+  //   };
+  // }, [isOpen, handleOutsideClick]);
 
   const handleSearch = useDebouncedCallback((term: string) => {
     const params = new URLSearchParams(searchParams);
@@ -40,53 +57,19 @@ const SearchEngine = () => {
   }
 
   const handleClick = (tag: tags) => {
-    if (tag.label.toLowerCase() === "all") {
-      setTags((prev) =>
-        prev.map((obj) =>
-          obj.id === tag.id
-            ? { ...obj, active: true }
-            : { ...obj, active: false }
-        )
-      );
-    } else {
-      setTags((prev) =>
-        prev.map((obj) =>
-          obj.id === tag.id ? { ...obj, active: !obj.active } : obj
-        )
-      );
-
-      setTags((prev) =>
-        prev.map((obj) =>
-          obj.label === "All" ? { ...obj, active: false } : obj
-        )
-      );
-    }
+    toggleTag(tag);
   };
 
-  const ondropdownClick = (id: number, selectedLabel: string) => {
-    setTags((prev) =>
-      prev.map((item) =>
-        item.id === id ? { ...item, label: selectedLabel, active: true } : item
-      )
-    );
+  // const ondropdownClick = (id: number, selectedLabel: string) => {
+  //   updateTag(id, selectedLabel);
 
-    setTags((prev) =>
-      prev.map((obj) => (obj.label === "All" ? { ...obj, active: false } : obj))
-    );
+  //   setPosition(selectedLabel);
+  // };
 
-    setPosition(selectedLabel);
-  };
-
-  const onSelectionChange = (id: number, currentValue: string) => {
-    setTags((prev) =>
-      prev.map((item) => (item.id === id ? { ...item, active: true } : item))
-    );
-
-    setTags((prev) =>
-      prev.map((obj) => (obj.label === "All" ? { ...obj, active: false } : obj))
-    );
-    setValue(currentValue === value ? "" : currentValue);
-  };
+  // const onSelectionChange = (id: number, currentValue: string) => {
+  //   updateTag(id, currentValue);
+  //   setValue(currentValue === value ? "" : currentValue);
+  // };
 
   const emptyInput =
     inputEl.current?.value === "" || inputEl.current?.value === undefined;
@@ -117,7 +100,7 @@ const SearchEngine = () => {
         </div>
       </div>
 
-      <div className="flex gap-3 overflow-x-auto disable-scroll items-center">
+      <div className="flex gap-3 overflow-x-auto overflow-y-hidden disable-scroll items-center">
         {tags.map((tag) => {
           if (tag.dropdown) {
             return (
@@ -125,12 +108,9 @@ const SearchEngine = () => {
                 key={tag.id}
                 label={tag.label}
                 options={tag.dropdown}
-                position={position}
                 tagId={tag.id}
-                setPosition={ondropdownClick}
+                ref={elRef}
                 active={tag.active}
-                value={value}
-                onSelectHandler={onSelectionChange}
               />
             );
           }
@@ -139,10 +119,10 @@ const SearchEngine = () => {
               key={tag.id}
               onClick={() => handleClick(tag)}
               className={clsx(
-                "flex relative items-center  px-3 h-max  text-[13px] py-1 rounded-lg",
+                "flex relative items-center  px-3 h-max font-[400] text-[13px] py-1 rounded-lg",
                 {
                   "bg-blue-400 hover:bg-blue-400 text-white": tag.active,
-                  "bg-[#f1f1f1] hover:bg-[#f5f5f5] text-black": !tag.active,
+                  "bg-[#f1f1f1] hover:bg-[#f5f5f5]  text-black": !tag.active,
                 }
               )}
             >
@@ -152,6 +132,14 @@ const SearchEngine = () => {
         })}
       </div>
     </div>
+  );
+};
+
+const SearchEngine = () => {
+  return (
+    <SearchProvider>
+      <SearchEngineWrapper />
+    </SearchProvider>
   );
 };
 
